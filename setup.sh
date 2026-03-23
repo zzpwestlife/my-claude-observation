@@ -140,6 +140,16 @@ data['env'].update({
     'OTEL_LOGS_EXPORT_INTERVAL': '5000'
 })
 
+# Fix hardcoded hook ports if they exist
+if 'hooks' in data:
+    for hook_type, hook_list in data['hooks'].items():
+        for hook_group in hook_list:
+            if 'hooks' in hook_group:
+                for hook in hook_group['hooks']:
+                    if hook.get('type') == 'command' and 'command' in hook:
+                        import re
+                        hook['command'] = re.sub(r'http://localhost:\d+/notify', f'http://localhost:${OTEL_PORT}/notify', hook['command'])
+
 with open(filepath, 'w') as f:
     json.dump(data, f, indent=4)
 "

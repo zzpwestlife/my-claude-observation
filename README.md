@@ -64,12 +64,20 @@ make start
 ## 🔧 常见问题排查 (FAQ)
 
 ### 1. Grafana 成功启动，但面板没有数据 (No Data)
-- **原因 A：** 可能是因为你在启动监控系统前，Claude Code 会话就已经打开。旧会话不会自动加载新的遥测配置。
-  - **解决：** 关闭当前的 Claude Code 会话，新开一个终端窗口重新运行 `claude` 产生一些对话后等待 15 秒刷新页面。
+- **原因 A（最常见）：** 修改遥测配置后，**没有重启 Claude Code 会话**。Claude Code 是一个长驻进程，不会热加载 `settings.json`。
+  - **解决：** 在当前运行 `claude` 的终端中输入 `/exit` 或按 `Ctrl+C` 退出，然后重新运行 `claude`。随便聊两句产生数据后，等待约 15 秒（VictoriaMetrics 刷盘延迟），刷新 Grafana 页面即可。
 - **原因 B：** Claude Code 的指标需要 `cumulative` 模式，否则会被 VictoriaMetrics 丢弃。
   - **解决：** 检查 `~/.claude/settings.json` 的 `env` 节点中是否包含 `"OTEL_METRICS_EXPORTER_TEMPORALITY_PREFERENCE": "cumulative"`。如果使用 `make install` 的自动配置，该项会自动添加。
 
-### 2. 为什么 OTel 默认使用 4319 而不是标准的 4318 端口？
+### 2. 终端出现 `Stop hook error: Failed with non-blocking status code: No stderr output` 报错
+- **原因：** 如果你修改了 OTel 的端口（比如从默认的 `4318` 改为了 `4319`），虽然更新了 `env` 中的端点配置，但 `settings.json` 中可能还残留着硬编码的 `hooks`（例如 `Notification`、`Stop`、`SubagentStop`）指向旧端口 `4318`。当这些 Hook 触发并向不存在的端口发送 `curl` 请求时就会报错。
+  - **解决：** 运行以下命令一键将 `hooks` 中的端口替换为新端口（以 `4319` 为例）：
+    ```bash
+    sed -i '' 's/http:\/\/localhost:4318\/notify/http:\/\/localhost:4319\/notify/g' ~/.claude/settings.json
+    ```
+    *(注：最新版本的 `make install` 已经自动包含了此修复逻辑)*。修改后请重启 Claude Code 会话。
+
+### 3. 为什么 OTel 默认使用 4319 而不是标准的 4318 端口？
 在部分 macOS 环境下，宿主机的 `4318` 端口可能被其他常驻进程（如 `lumo-daem`）静默占用，导致 Docker 无法正常绑定或数据被劫持。为了避免端口冲突，本系统默认将 OTel Collector 暴露在宿主机的 `4319` 端口，并将 Claude Code 的配置指向 `4319`。
 
 ### 3. 如何备份和迁移数据？
