@@ -9,7 +9,7 @@ services:
     volumes:
       - ./otel-collector-config.yaml:/etc/otelcol-contrib/config.yaml:ro
     ports:
-      - "127.0.0.1:4319:4318"   # HTTP/JSON OTLP receiver (4318 occupied by lumo-daem)
+      - "127.0.0.1:${OTEL_PORT:-4319}:4318"   # HTTP/JSON OTLP receiver
     networks:
       - monitoring
     restart: unless-stopped
@@ -26,7 +26,7 @@ services:
     volumes:
       - vm_data:/storage
     ports:
-      - "127.0.0.1:8428:8428"
+      - "127.0.0.1:${VM_PORT:-8428}:8428"
     networks:
       - monitoring
     restart: unless-stopped
@@ -44,7 +44,7 @@ services:
       - ./grafana/provisioning:/etc/grafana/provisioning:ro
       - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
     ports:
-      - "127.0.0.1:3001:3000"        # 3001 on host (Langfuse occupies 3000)
+      - "127.0.0.1:${GRAFANA_PORT:-3001}:3000"        # Host port
     networks:
       - monitoring
     restart: unless-stopped
