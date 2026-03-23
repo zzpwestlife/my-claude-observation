@@ -1,0 +1,15 @@
+# INPUT: dashboard JSON files from /var/lib/grafana/dashboards
+# OUTPUT: auto-provisioned Grafana dashboards
+# POS: grafana/provisioning/dashboards/dashboards.yaml
+
+apiVersion: 1
+
+providers:
+  - name: Claude Code
+    folder: Applications
+    type: file
+    disableDeletion: true
+    editable: true
+    updateIntervalSeconds: 30
+    options:
+      path: /var/lib/grafana/dashboards

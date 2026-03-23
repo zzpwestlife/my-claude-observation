@@ -1,0 +1,62 @@
+# INPUT: Claude Code OTel metrics (HTTP/JSON OTLP)
+# OUTPUT: Grafana dashboards at localhost:3001
+# POS: my-claude-observation/docker-compose.yml
+
+services:
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    container_name: otel-collector
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otelcol-contrib/config.yaml:ro
+    ports:
+      - "127.0.0.1:4319:4318"   # HTTP/JSON OTLP receiver (4318 occupied by lumo-daem)
+    networks:
+      - monitoring
+    restart: unless-stopped
+    depends_on:
+      - victoriametrics
+
+  victoriametrics:
+    image: victoriametrics/victoria-metrics:latest
+    container_name: victoriametrics
+    command:
+      - "-retentionPeriod=12"                     # 1 year retention
+      - "-opentelemetry.usePrometheusNaming"      # Convert dot-notation to prometheus_naming for PromQL
+      - "-storageDataPath=/storage"
+    volumes:
+      - vm_data:/storage
+    ports:
+      - "127.0.0.1:8428:8428"
+    networks:
+      - monitoring
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:11.5.0
+    container_name: grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_SERVER_HTTP_PORT=3000
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+    ports:
+      - "127.0.0.1:3001:3000"        # 3001 on host (Langfuse occupies 3000)
+    networks:
+      - monitoring
+    restart: unless-stopped
+    depends_on:
+      - victoriametrics
+
+networks:
+  monitoring:
+    driver: bridge
+
+volumes:
+  vm_data:
+    driver: local
+  grafana_data:
+    driver: local

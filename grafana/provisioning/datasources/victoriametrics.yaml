@@ -1,0 +1,15 @@
+# INPUT: VictoriaMetrics HTTP API
+# OUTPUT: Grafana PromQL datasource
+# POS: grafana/provisioning/datasources/victoriametrics.yaml
+
+apiVersion: 1
+
+datasources:
+  - name: VictoriaMetrics
+    type: prometheus
+    access: proxy
+    url: http://victoriametrics:8428
+    isDefault: true
+    editable: false
+    jsonData:
+      timeInterval: "15s"

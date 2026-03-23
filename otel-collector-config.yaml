@@ -1,0 +1,39 @@
+# INPUT: OTLP HTTP/JSON from Claude Code (port 4318)
+# OUTPUT: prometheus remote write to VictoriaMetrics
+# POS: my-claude-observation/otel-collector-config.yaml
+
+receivers:
+  otlp:
+    protocols:
+      http:
+        endpoint: "0.0.0.0:4318"
+        # gRPC intentionally disabled - Claude Code is configured for http/json
+
+processors:
+  batch:
+    timeout: 5s
+    send_batch_size: 100
+
+exporters:
+  prometheusremotewrite:
+    endpoint: "http://victoriametrics:8428/api/v1/write"
+    tls:
+      insecure: true
+
+  debug:
+    verbosity: detailed
+
+service:
+  telemetry:
+    logs:
+      level: debug
+
+  pipelines:
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [prometheusremotewrite, debug]
+    logs:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [debug]

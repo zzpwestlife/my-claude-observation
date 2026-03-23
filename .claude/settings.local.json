@@ -1,4 +1,36 @@
 {
+  "permissions": {
+    "allow": [
+      "Bash(npm:*)",
+      "Skill(optimize-prompt)",
+      "Bash(tree:*)",
+      "Bash(git:*)",
+      "Skill(executing-plans)",
+      "Bash(chmod:*)",
+      "Bash(python3:*)",
+      "Bash(xargs:*)",
+      "Bash(echo:*)",
+      "Bash(du:*)",
+      "Bash(ls:*)",
+      "Bash(go:*)",
+      "Bash(test:*)",
+      "mcp__filesystem__list_directory",
+      "Bash(pip3 install:*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/go/format-go-code.sh"
+          }
+        ]
+      }
+    ]
+  },
   "env": {
     "TRACE_TO_LANGFUSE": "true",
     "LANGFUSE_PUBLIC_KEY": "pk-lf-a1ba75ae-11be-4962-83de-54df2bbe0094",
