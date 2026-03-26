@@ -55,7 +55,14 @@ make start
    - 按语言分布的编辑统计
    - Session 活动详情表
 
-3. **Node Overview** - 系统资源与 Go 运行时监控
+3. **Claude Code Session Detail** - 单个 Session 的详细指标
+   - Session 元数据（终端类型、环境变量）
+   - Token 使用量按模型分解
+   - 缓存命中率分析
+   - 成本按模型分解
+   - 编辑决策详情
+
+4. **Node Overview** - 系统资源与 Go 运行时监控
    - CPU 使用率、内存使用
    - 文件描述符、Goroutines 数量
    - GC 性能指标

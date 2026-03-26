@@ -1,4 +1,4 @@
-.PHONY: help install start stop status logs clean test-session
+.PHONY: help install start stop status logs clean test-session session-viewer
 
 help: ## Show this help
 	@echo "Claude Code Observation Project Makefile"
@@ -10,6 +10,7 @@ help: ## Show this help
 	@echo "  make status        - View container status"
 	@echo "  make logs          - View container logs"
 	@echo "  make clean         - Stop containers and remove volumes (DELETES ALL DATA)"
+	@echo "  make session-viewer- Start the Streamlit Session Viewer (http://localhost:8501)"
 
 install: ## Run the interactive setup
 	@./setup.sh
@@ -39,3 +40,9 @@ clean: ## Stop and remove containers and volumes
 	else \
 		echo "Aborted."; \
 	fi
+
+session-viewer: ## Start the Streamlit Session Viewer
+	@echo "Starting Claude Code Session Viewer..."
+	@echo "Access: http://localhost:8501"
+	@echo "Press Ctrl+C to stop"
+	@cd session-viewer && python3 -m streamlit run app.py
