@@ -1,15 +1,15 @@
-.PHONY: help install start stop status logs clean
+.PHONY: help install start stop status logs clean test-session
 
 help: ## Show this help
 	@echo "Claude Code Observation Project Makefile"
 	@echo ""
 	@echo "Usage:"
-	@echo "  make install  - Run the interactive setup wizard"
-	@echo "  make start    - Start the monitoring stack (Docker Compose)"
-	@echo "  make stop     - Stop the monitoring stack"
-	@echo "  make status   - View container status"
-	@echo "  make logs     - View container logs"
-	@echo "  make clean    - Stop containers and remove volumes (DELETES ALL DATA)"
+	@echo "  make install       - Run the interactive setup wizard"
+	@echo "  make start         - Start the monitoring stack (Docker Compose)"
+	@echo "  make stop          - Stop the monitoring stack"
+	@echo "  make status        - View container status"
+	@echo "  make logs          - View container logs"
+	@echo "  make clean         - Stop containers and remove volumes (DELETES ALL DATA)"
 
 install: ## Run the interactive setup
 	@./setup.sh

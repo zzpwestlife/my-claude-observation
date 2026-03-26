@@ -10,8 +10,12 @@ services:
       - ./otel-collector-config.yaml:/etc/otelcol-contrib/config.yaml:ro
     ports:
       - "127.0.0.1:${OTEL_PORT:-4319}:4318"   # HTTP/JSON OTLP receiver
+      - "127.0.0.1:${OTEL_GRPC_PORT:-4317}:4317"   # gRPC OTLP (for future use)
     networks:
       - monitoring
+    environment:
+      - NO_PROXY=localhost,127.0.0.1,192.168.0.0/16,10.0.0.0/8,172.16.0.0/12,victoriametrics
+      - no_proxy=localhost,127.0.0.1,192.168.0.0/16,10.0.0.0/8,172.16.0.0/12,victoriametrics
     restart: unless-stopped
     depends_on:
       - victoriametrics
@@ -23,13 +27,20 @@ services:
       - "-retentionPeriod=12"                     # 1 year retention
       - "-opentelemetry.usePrometheusNaming"      # Convert dot-notation to prometheus_naming for PromQL
       - "-storageDataPath=/storage"
+      - "-selfScrapeInterval=10s"                 # Self-monitoring
+      - "-httpListenAddr=0.0.0.0:8428"            # Listen on all interfaces
     volumes:
       - vm_data:/storage
     ports:
-      - "127.0.0.1:${VM_PORT:-8428}:8428"
+      - "${VM_PORT:-8428}:8428"                    # Bind to all interfaces, not just 127.0.0.1
     networks:
       - monitoring
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8428/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   grafana:
     image: grafana/grafana:11.5.0
@@ -39,6 +50,9 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=admin
       - GF_USERS_ALLOW_SIGN_UP=false
       - GF_SERVER_HTTP_PORT=3000
+      - GF_FEATURE_TOGGLES_ENABLE=traceqlEditor # Enable tracing features
+      - NO_PROXY=localhost,127.0.0.1,192.168.0.0/16,10.0.0.0/8,172.16.0.0/12,victoriametrics
+      - no_proxy=localhost,127.0.0.1,192.168.0.0/16,10.0.0.0/8,172.16.0.0/12,victoriametrics
     volumes:
       - grafana_data:/var/lib/grafana
       - ./grafana/provisioning:/etc/grafana/provisioning:ro
@@ -50,6 +64,11 @@ services:
     restart: unless-stopped
     depends_on:
       - victoriametrics
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
 networks:
   monitoring:

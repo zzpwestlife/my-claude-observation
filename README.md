@@ -36,13 +36,30 @@ make start
 
 ### 3. 查看大盘
 
-容器启动完成后，在浏览器中访问 Grafana：
+进入 Grafana 查看监控数据：
 
 - **URL**: `http://localhost:3001` (或你自定义的 Grafana 端口)
 - **默认账号**: `admin`
 - **默认密码**: `admin`
 
-进入 **Dashboards → Applications → Claude Code Metrics** 即可看到 Token 消耗及花费面板。
+#### 可用仪表盘
+
+1. **Claude Code Metrics** - 基础 Token 和成本监控
+   - Token 使用量、成本估算
+   - 模型分布、缓存命中率
+   - 时间趋势分析
+
+2. **Claude Code Session Analysis** - Session 活跃度与工具使用分析
+   - Session 总数、活跃时间统计
+   - 代码编辑决策（Accept/Reject）
+   - 按语言分布的编辑统计
+   - Session 活动详情表
+
+3. **Node Overview** - 系统资源与 Go 运行时监控
+   - CPU 使用率、内存使用
+   - 文件描述符、Goroutines 数量
+   - GC 性能指标
+   - 磁盘 I/O 统计
 
 ---
 
@@ -58,6 +75,8 @@ make start
 | `make status` | 查看所有容器的当前运行状态。 |
 | `make logs` | 实时查看所有容器的运行日志（按 `Ctrl+C` 退出）。 |
 | `make clean` | **⚠️ 危险操作**：停止所有容器并删除数据卷（VictoriaMetrics 和 Grafana 数据将清空）。 |
+| `make test-session` | ✨ **新增**：运行 Session 追踪测试脚本，生成模拟数据。 |
+| `make test-session` | ✨ **新增**：运行 Session 追踪测试脚本，生成模拟数据。 |
 
 ---
 

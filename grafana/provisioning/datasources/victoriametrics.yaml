@@ -8,8 +8,8 @@ datasources:
   - name: VictoriaMetrics
     type: prometheus
     access: proxy
-    url: http://victoriametrics:8428
+    url: http://192.168.107.2:8428
     isDefault: true
-    editable: false
+    editable: true
     jsonData:
       timeInterval: "15s"
