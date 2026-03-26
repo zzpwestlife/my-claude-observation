@@ -1,0 +1,6 @@
+{
+  "identifier": "com.zhnd.lumo",
+  "build": {
+    "beforeBuildCommand": "pnpm build"
+  }
+}

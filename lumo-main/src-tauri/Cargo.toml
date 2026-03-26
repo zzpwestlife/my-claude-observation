@@ -1,0 +1,55 @@
+[package]
+name = "app"
+version = "0.3.1"
+description = "A Tauri App"
+authors = ["you"]
+license = ""
+repository = ""
+edition = "2021"
+rust-version = "1.77.2"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+name = "app_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2.5.6", features = [] }
+toml = "1.0"
+
+[dependencies]
+# Workspace dependencies
+serde_json.workspace = true
+serde.workspace = true
+log.workspace = true
+sqlx.workspace = true
+tokio.workspace = true
+uuid.workspace = true
+typeshare.workspace = true
+anyhow.workspace = true
+chrono.workspace = true
+
+# Tauri-specific dependencies (not in workspace)
+tauri = { version = "2.10.3", features = ["image-png"] }
+tauri-plugin-log = "2"
+dirs = "6"
+
+# Shared library
+shared = { path = "../crates/shared" }
+base64 = "0.22"
+tauri-plugin-clipboard-manager = "2.3.2"
+tauri-plugin-dialog = "2.6.0"
+tauri-plugin-updater = "2"
+tauri-plugin-process = "2"
+tauri-plugin-notification = "2"
+tauri-plugin-window-state = "2"
+reqwest = { version = "0.13", features = ["json", "rustls"], default-features = false }
+notify = { version = "8", default-features = false, features = ["macos_fsevent"] }
+urlencoding = "2"
+serde_yaml = "0.9"
+which = "8"
+tauri-plugin-opener = "2"
+
+[dev-dependencies]
+tempfile = "3"

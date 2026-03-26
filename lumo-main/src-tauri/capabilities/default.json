@@ -1,0 +1,33 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "enables the default permissions",
+  "windows": [
+    "main"
+  ],
+  "permissions": [
+    "core:default",
+    "core:window:allow-toggle-maximize",
+    "core:window:allow-close",
+    "core:window:allow-minimize",
+    "core:window:allow-start-dragging",
+    "core:window:allow-show",
+    "core:window:allow-set-always-on-top",
+    "core:window:allow-set-focus",
+    "clipboard-manager:allow-write-image",
+    "clipboard-manager:allow-write-text",
+    "dialog:allow-save",
+    "dialog:default",
+    "updater:default",
+    "process:allow-restart",
+    "notification:default",
+    "window-state:default",
+    {
+      "identifier": "opener:allow-open-url",
+      "allow": [
+        { "url": "https://*" },
+        { "url": "http://*" }
+      ]
+    }
+  ]
+}

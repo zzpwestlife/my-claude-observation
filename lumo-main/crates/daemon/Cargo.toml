@@ -1,0 +1,47 @@
+[package]
+name = "lumo-daemon"
+version = "0.3.1"
+edition = "2021"
+
+[[bin]]
+name = "lumo-daemon"
+path = "src/main.rs"
+
+[dependencies]
+# Shared library
+shared = { path = "../shared" }
+
+# Async runtime
+tokio.workspace = true
+
+# HTTP server
+axum.workspace = true
+tower.workspace = true
+tower-http.workspace = true
+
+# OTLP protocol
+opentelemetry-proto.workspace = true
+prost.workspace = true
+
+# Database
+sqlx.workspace = true
+
+# Serialization
+serde.workspace = true
+serde_json.workspace = true
+
+# Types
+uuid.workspace = true
+chrono.workspace = true
+
+# Error handling
+anyhow.workspace = true
+thiserror.workspace = true
+
+# CLI
+clap = { version = "4", features = ["derive"] }
+dirs = "6"
+
+# Logging
+tracing.workspace = true
+tracing-subscriber.workspace = true

@@ -1,0 +1,7 @@
+[general]
+target = "typescript"
+
+# Type mappings for custom types
+[typescript.type_mappings]
+"Uuid" = "string"
+"DateTime" = "string"
